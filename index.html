@@ -1431,8 +1431,8 @@
         }
 
         // 10. FORMSPREE INTEGRATION WITH AJAX DEPLOYMENTS
-        const FORMSPREE_CONTACT_ENDPOINT = "YOUR_CONTACT_FORMSPREE_ENDPOINT_HERE";
-        const FORMSPREE_CAREER_ENDPOINT = "YOUR_CAREER_FORMSPREE_ENDPOINT_HERE";
+        const FORMSPREE_CONTACT_ENDPOINT = "https://formspree.io/f/xgogalvn";
+        const FORMSPREE_CAREER_ENDPOINT = "https://formspree.io/f/xdaqeloa";
 
         async function handleContactSubmit(event) {
             event.preventDefault();
@@ -1447,7 +1447,7 @@
             const message = document.getElementById('contactMessage').value;
 
             if (FORMSPREE_CONTACT_ENDPOINT === "YOUR_CONTACT_FORMSPREE_ENDPOINT_HERE" || !FORMSPREE_CONTACT_ENDPOINT) {
-                showNotification("Demo Received", `Contact form working! (Simulated: ${first} ${last})`);
+                showNotification("Thanks for contacting!", `We will reach you soon! (Name: ${first} ${last})`);
                 form.reset();
                 return;
             }
@@ -1523,7 +1523,7 @@
 
             if (FORMSPREE_CAREER_ENDPOINT === "YOUR_CAREER_FORMSPREE_ENDPOINT_HERE" || !FORMSPREE_CAREER_ENDPOINT) {
                 closeApplyModal();
-                showNotification("Demo Application", `Application working! (Simulated: ${name} for ${role})`);
+                showNotification("Application received", `We will contact you soon! (Name: ${name} for ${role})`);
                 return;
             }
 
