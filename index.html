@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <link rel="icon" type="image/x-icon" href="Assets/Logo.svg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="siteTitle">Agrowin</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        /* Custom scrollbar and clean transitions */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #16a34a;
+        }
+        
+        .fade-in-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .fade-in-on-scroll.appear {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Slow floating decorative keyframes */
+        @keyframes float-slow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(3deg); }
+        }
+        @keyframes float-reverse {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(12px) rotate(-4deg); }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+        @keyframes scrollGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+
+        .animate-float-1 {
+            animation: float-slow 8s ease-in-out infinite;
+        }
+        .animate-float-2 {
+            animation: float-reverse 10s ease-in-out infinite;
+        }
+        .hardware-glow {
+            animation: pulseGlow 3s infinite;
+        }
+        
+        /* Interactive grid patterns */
+        .tech-grid-bg {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(34, 197, 94, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(34, 197, 94, 0.03) 1px, transparent 1px);
+            animation: scrollGrid 25s linear infinite;
+        }
+
+        /* SPA views transitions and animations */
+        .view-transition {
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        .view-hidden {
+            display: none !important;
+            opacity: 0;
+            transform: translateY(15px);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased overflow-x-hidden min-h-screen flex flex-col justify-between">
+
+    <!-- Interactive Node Mesh Canvas (Spanning the full viewport behind the scenes) -->
+    <canvas id="agriMeshCanvas" class="fixed inset-0 z-0 pointer-events-none opacity-80"></canvas>
+
+    <!-- HEADER & NAVIGATION -->
+    <header class="fixed top-0 left-0 w-full bg-white/95 backdrop-blur-md shadow-sm z-50 transition-all duration-300" id="mainHeader">
+        <div class="flex items-center justify-between h-20 px-6 sm:px-12 w-full transition-all duration-300" id="headerContainer">
+            <!-- Logo (Left-aligned with scalable padding) -->
+            <a href="#home" class="flex items-center space-x-3 group pl-0 ml-0" onclick="navigateToHash('#home')">
+                <div class="w-11 h-11 bg-white border border-brand-100 rounded-xl flex items-center justify-center shadow-lg shadow-brand-500/10 group-hover:shadow-brand-500/30 group-hover:scale-105 transition-all duration-300 overflow-hidden p-1.5">
+                    <img src="./Assets/Logo.png" alt="AGROWIN Logo" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='https://placehold.co/100x100/ffffff/16a34a?text=AG';">
+                </div>
+                <div>
+                    <span class="font-extrabold text-xl sm:text-2xl tracking-tight text-slate-900 group-hover:text-brand-700 transition-colors duration-300">AGROWIN</span>
+                    <span class="block text-[9px] font-semibold text-brand-600 tracking-wider uppercase -mt-1">Technology</span>
+                </div>
+            </a>
+
+            <!-- Desktop Navigation Links (Properly aligned with the dropdown Menu) -->
+            <nav class="hidden lg:flex items-center space-x-6 xl:space-x-8 pr-0 mr-0 relative">
+                <a href="#home" onclick="navigateToHash('#home')" class="nav-link font-medium text-slate-600 hover:text-brand-700 transition-colors py-2 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-brand-600 hover:after:w-full after:transition-all after:duration-300">Home</a>
+                <a href="#about" onclick="navigateToHash('#about')" class="nav-link font-medium text-slate-600 hover:text-brand-700 transition-colors py-2 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-brand-600 hover:after:w-full after:transition-all after:duration-300">About Us</a>
+                <a href="#services" onclick="navigateToHash('#services')" class="nav-link font-medium text-slate-600 hover:text-brand-700 transition-colors py-2 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-brand-600 hover:after:w-full after:transition-all after:duration-300">Services</a>
+                <a href="#projects" onclick="navigateToHash('#projects')" class="nav-link font-medium text-slate-600 hover:text-brand-700 transition-colors py-2 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-brand-600 hover:after:w-full after:transition-all after:duration-300">Projects</a>
+                <a href="#contact" onclick="navigateToHash('#contact')" class="nav-link font-medium text-slate-600 hover:text-brand-700 transition-colors py-2 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-brand-600 hover:after:w-full after:transition-all after:duration-300">Contact</a>
+                
+                <!-- Desktop 3-Line Menu Dropdown Switch -->
+                <div class="relative">
+                    <button id="desktopDropdownBtn" class="flex items-center gap-1.5 px-4 py-2 bg-brand-50 hover:bg-brand-100 text-brand-800 rounded-lg font-semibold transition-all">
+                        <i data-lucide="menu" class="w-5 h-5"></i>
+                        <span>Menu</span>
+                    </button>
+                    <!-- Floating Submenu Panel -->
+                    <div id="desktopSubmenu" class="hidden absolute right-0 mt-3 w-56 bg-white border border-slate-100 rounded-2xl shadow-xl py-2 z-50 transform origin-top-right transition-all scale-95 opacity-0">
+                        <a href="#achievements" onclick="navigateToHash('#achievements')" class="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-brand-50/50 hover:text-brand-800 text-sm font-semibold transition-colors">
+                            <i data-lucide="award" class="w-4 h-4 text-brand-600"></i>
+                            Achievements
+                        </a>
+                        <a href="#people" onclick="navigateToHash('#people')" class="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-brand-50/50 hover:text-brand-800 text-sm font-semibold transition-colors">
+                            <i data-lucide="users" class="w-4 h-4 text-brand-600"></i>
+                            Company People
+                        </a>
+                        <a href="#career" onclick="navigateToHash('#career')" class="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-brand-50/50 hover:text-brand-800 text-sm font-semibold transition-colors">
+                            <i data-lucide="briefcase" class="w-4 h-4 text-brand-600"></i>
+                            Career
+                        </a>
+                        <a href="#gallery" onclick="navigateToHash('#gallery')" class="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-brand-50/50 hover:text-brand-800 text-sm font-semibold transition-colors">
+                            <i data-lucide="image" class="w-4 h-4 text-brand-600"></i>
+                            Gallery
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobileMenuBtn" class="lg:hidden p-2.5 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-950 focus:outline-none transition-all mr-0">
+                <i data-lucide="menu" class="w-6 h-6" id="menuIcon"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Dynamic Dropdown Menu -->
+        <div id="mobileMenu" class="hidden lg:hidden bg-white border-t border-slate-100 shadow-xl absolute top-20 left-0 w-full transition-all duration-300 origin-top transform scale-y-95 opacity-0">
+            <div class="px-4 pt-3 pb-8 space-y-3">
+                <a href="#home" onclick="navigateToHash('#home')" class="mobile-nav-link block px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-700 rounded-lg transition-all">Home</a>
+                <a href="#about" onclick="navigateToHash('#about')" class="mobile-nav-link block px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-700 rounded-lg transition-all">About Us</a>
+                <a href="#services" onclick="navigateToHash('#services')" class="mobile-nav-link block px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-700 rounded-lg transition-all">Services</a>
+                <a href="#projects" onclick="navigateToHash('#projects')" class="mobile-nav-link block px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-700 rounded-lg transition-all">Projects</a>
+                <a href="#contact" onclick="navigateToHash('#contact')" class="mobile-nav-link block px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-700 rounded-lg transition-all">Contact</a>
+                
+                <div class="pt-2 border-t border-slate-100 space-y-1">
+                    <span class="block px-4 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Internal Pages</span>
+                    <a href="#achievements" onclick="navigateToHash('#achievements')" class="mobile-nav-link flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-700 rounded-lg transition-all">
+                        <i data-lucide="award" class="w-4 h-4 text-brand-600"></i> Achievements
+                    </a>
+                    <a href="#people" onclick="navigateToHash('#people')" class="mobile-nav-link flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-700 rounded-lg transition-all">
+                        <i data-lucide="users" class="w-4 h-4 text-brand-600"></i> Company People
+                    </a>
+                    <a href="#career" onclick="navigateToHash('#career')" class="mobile-nav-link flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-700 rounded-lg transition-all">
+                        <i data-lucide="briefcase" class="w-4 h-4 text-brand-600"></i> Career Hub
+                    </a>
+                    <a href="#gallery" onclick="navigateToHash('#gallery')" class="mobile-nav-link flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-brand-50 hover:text-brand-700 rounded-lg transition-all">
+                        <i data-lucide="image" class="w-4 h-4 text-brand-600"></i> Gallery
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ======================================================== -->
+    <!-- TEMPLATE 1: MAIN LANDING VIEW (index.html) -->
+    <!-- ======================================================== -->
+    <main id="main-view" class="view-transition w-full flex-grow">
+        
+        <!-- HERO SECTION -->
+        <section id="home" class="relative min-h-screen pt-28 flex items-center bg-gradient-to-br from-white via-brand-50/20 to-slate-50 overflow-hidden w-full">
+            <div class="absolute inset-0 tech-grid-bg pointer-events-none z-0"></div>
+            <div class="absolute top-1/4 left-5 lg:left-12 w-72 h-72 bg-brand-500/5 rounded-full filter blur-3xl pointer-events-none z-0 animate-float-1"></div>
+            <div class="absolute bottom-1/4 right-5 lg:right-12 w-96 h-96 bg-emerald-500/5 rounded-full filter blur-3xl pointer-events-none z-0 animate-float-2"></div>
+
+            <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-8 md:px-16 xl:px-24 relative z-10 py-12 lg:py-20">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+                    <!-- Left Hero Content -->
+                    <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-100/80 backdrop-blur-sm text-brand-800 text-xs font-semibold tracking-wide border border-brand-200/50 shadow-sm">
+                            <span class="w-2 h-2 rounded-full bg-brand-600 animate-pulse"></span>
+                            Advancing Sustainable AgTech
+                        </div>
+                        
+                        <h1 class="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                            Where <span class="text-brand-700">Agriculture</span> Meets <span class="relative inline-block text-slate-950">
+                                Embedded Tech
+                                <span class="absolute bottom-1 left-0 w-full h-2 bg-brand-200 -z-10 rounded"></span>
+                            </span>
+                        </h1>
+                        
+                        <p class="text-base sm:text-lg text-slate-600 font-normal leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                            We engineer smart IoT nodes, ruggedized hardware devices, and low-power automation sensors built to elevate crop yields and save water.
+                        </p>
+                        
+                        <!-- Hero CTAs -->
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
+                            <a href="#services" class="group px-7 py-3.5 bg-brand-700 hover:bg-brand-800 text-white font-semibold rounded-xl shadow-lg shadow-brand-700/20 hover:shadow-xl hover:shadow-brand-700/35 transform hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2">
+                                Explore Solutions
+                                <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                            </a>
+                            <a href="#contact" class="px-7 py-3.5 bg-white/80 backdrop-blur-sm hover:bg-slate-50 text-slate-800 hover:text-slate-950 border border-slate-200/80 font-semibold rounded-xl shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2">
+                                Consult Engineers
+                            </a>
+                        </div>
+
+                        <!-- Metrics Grid -->
+                        <div class="pt-6 grid grid-cols-3 gap-4 border-t border-slate-200/60 max-w-md mx-auto lg:mx-0">
+                            <div>
+                                <span class="block text-xl sm:text-2xl md:text-3xl font-bold text-slate-900">99.9%</span>
+                                <span class="block text-[10px] sm:text-xs text-slate-500 font-semibold">Node Uptime</span>
+                            </div>
+                            <div>
+                                <span class="block text-xl sm:text-2xl md:text-3xl font-bold text-slate-900">10k+</span>
+                                <span class="block text-[10px] sm:text-xs text-slate-500 font-semibold">Acres Tracked</span>
+                            </div>
+                            <div>
+                                <span class="block text-xl sm:text-2xl md:text-3xl font-bold text-slate-900">25+</span>
+                                <span class="block text-[10px] sm:text-xs text-slate-500 font-semibold">Sensors Built</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Hero Visual Panel -->
+                    <div class="lg:col-span-5 flex justify-center relative w-full">
+                        <div class="relative w-full max-w-sm sm:max-w-md aspect-square animate-float-1">
+                            <div class="absolute -inset-4 rounded-[40px] bg-gradient-to-tr from-brand-300/20 to-emerald-200/15 blur-3xl -z-10"></div>
+                            
+                            <div class="w-full h-full bg-white/95 backdrop-blur-md rounded-3xl border border-slate-100/80 shadow-2xl p-6 relative overflow-hidden flex flex-col justify-between">
+                                <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-3 h-3 rounded-full bg-red-400"></span>
+                                        <span class="w-3 h-3 rounded-full bg-yellow-400"></span>
+                                        <span class="w-3 h-3 rounded-full bg-green-400 animate-pulse"></span>
+                                    </div>
+                                    <span class="text-[10px] font-mono text-slate-400 bg-slate-50 px-2.5 py-1 rounded border border-slate-100">agrowin_node_v3.2</span>
+                                </div>
+
+                                <div class="relative flex-grow flex items-center justify-center my-4">
+                                    <svg class="w-4/5 h-4/5 text-brand-600" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="75" y="75" width="50" height="50" rx="6" fill="#14532d" class="shadow-lg" />
+                                        <rect x="80" y="80" width="40" height="40" rx="4" fill="#166534" />
+                                        <path d="M100 10V75M100 125V190M10 100H75M125 100H190" stroke="#22c55e" stroke-width="2" stroke-dasharray="4 4" class="hardware-glow" />
+                                        <path d="M50 50L80 80M150 150L120 120M50 150L80 120M150 50L120 80" stroke="#16a34a" stroke-width="1.5" />
+                                        <circle cx="100" cy="10" r="8" fill="#15803d" />
+                                        <circle cx="100" cy="190" r="8" fill="#15803d" />
+                                        <circle cx="10" cy="100" r="8" fill="#15803d" />
+                                        <circle cx="190" cy="100" r="8" fill="#15803d" />
+                                    </svg>
+
+                                    <!-- Live Telemetry Overlays -->
+                                    <div class="absolute top-4 left-2 bg-white/95 border border-slate-100 shadow-md rounded-xl p-2.5 flex items-center gap-2.5 transform -rotate-3 hover:rotate-0 transition-transform duration-300">
+                                        <div class="p-1.5 bg-blue-50 text-blue-600 rounded-lg">
+                                            <i data-lucide="droplet" class="w-4 h-4"></i>
+                                        </div>
+                                        <div>
+                                            <span class="block text-[8px] text-slate-400 font-bold uppercase tracking-wider">Moisture</span>
+                                            <span id="liveMoisture" class="font-extrabold text-xs text-slate-800">42.8 %</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="absolute bottom-4 right-2 bg-white/95 border border-slate-100 shadow-md rounded-xl p-2.5 flex items-center gap-2.5 transform rotate-3 hover:rotate-0 transition-transform duration-300">
+                                        <div class="p-1.5 bg-amber-50 text-amber-600 rounded-lg">
+                                            <i data-lucide="thermometer" class="w-4 h-4"></i>
+                                        </div>
+                                        <div>
+                                            <span class="block text-[8px] text-slate-400 font-bold uppercase tracking-wider">Temp</span>
+                                            <span id="liveTemp" class="font-extrabold text-xs text-slate-800">28.4 °C</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between text-[11px] text-slate-500 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                                    <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-brand-500 animate-ping"></span> Live Signal</span>
+                                    <span>Strength: Excellent</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABOUT US SECTION -->
+        <section id="about" class="py-20 sm:py-24 bg-white border-y border-slate-100 relative overflow-hidden w-full">
+            <div class="absolute top-10 right-10 w-44 h-44 bg-brand-100/20 rounded-full filter blur-2xl pointer-events-none"></div>
+            <div class="absolute -bottom-10 left-10 w-64 h-64 bg-slate-100 rounded-full filter blur-3xl pointer-events-none"></div>
+
+            <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-8 md:px-16 xl:px-24 relative z-10">
+                <div class="text-center max-w-xl mx-auto mb-12 lg:mb-16 fade-in-on-scroll">
+                    <span class="text-brand-600 font-extrabold text-xs uppercase tracking-widest block mb-2">Our Origin</span>
+                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
+                        Farming Legacy Meets Hardware Engineering
+                    </h2>
+                    <div class="w-12 h-1 bg-brand-600 mx-auto mt-4 rounded-full"></div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+                    <!-- Left Details Story -->
+                    <div class="lg:col-span-6 space-y-6 fade-in-on-scroll">
+                        <h3 class="text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
+                            Reliable Hardware Built For Extreme Outdoor Conditions
+                        </h3>
+                        <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+                            We resolve complex agriculture problems with high-grade physical components. We design and build embedded PCBs, dynamic solar charging units, and smart valves that function without external power grids.
+                        </p>
+
+                        <!-- Value Tabs -->
+                        <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5 shadow-sm">
+                            <div class="flex border-b border-slate-200" id="aboutTabs">
+                                <button class="tab-btn px-3 py-2 font-bold text-xs text-brand-700 border-b-2 border-brand-600 focus:outline-none transition-all mr-4" onclick="switchAboutTab(event, 'mission')">Our Mission</button>
+                                <button class="tab-btn px-3 py-2 font-bold text-xs text-slate-400 hover:text-slate-600 border-b-2 border-transparent focus:outline-none transition-all mr-4" onclick="switchAboutTab(event, 'vision')">Our Vision</button>
+                                <button class="tab-btn px-3 py-2 font-bold text-xs text-slate-400 hover:text-slate-600 border-b-2 border-transparent focus:outline-none transition-all" onclick="switchAboutTab(event, 'tech')">Hardware Integrity</button>
+                            </div>
+                            
+                            <div class="mt-4 min-h-[90px]">
+                                <div id="tab-mission" class="tab-content block text-slate-600 text-xs sm:text-sm leading-relaxed">
+                                    Deploy field-ready embedded computers that run algorithmic automation natively, with zero dependency on unreliable cloud connections.
+                                </div>
+                                <div id="tab-vision" class="tab-content hidden text-slate-600 text-xs sm:text-sm leading-relaxed">
+                                    To establish ourselves as the world's standard hardware interface for industrial agricultural equipment automation.
+                                </div>
+                                <div id="tab-tech" class="tab-content hidden text-slate-600 text-xs sm:text-sm leading-relaxed">
+                                    Every enclosure is certified IP67 hermetic-sealed, shielding sensitive custom silicon from moisture, pesticides, and extreme heat.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Core Pillars -->
+                    <div class="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-6 fade-in-on-scroll">
+                        <div class="bg-slate-50 border border-slate-100 hover:border-brand-200 hover:bg-brand-50/20 p-6 rounded-2xl transition-all duration-300 shadow-sm group hover:-translate-y-1">
+                            <div class="w-10 h-10 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i data-lucide="cpu" class="w-5 h-5"></i>
+                            </div>
+                            <h4 class="text-base font-bold text-slate-900 mb-1">Embedded Circuitry</h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">Low-energy custom boards designed specifically for deep fields.</p>
+                        </div>
+
+                        <div class="bg-slate-50 border border-slate-100 hover:border-brand-200 hover:bg-brand-50/20 p-6 rounded-2xl transition-all duration-300 shadow-sm group hover:-translate-y-1">
+                            <div class="w-10 h-10 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i data-lucide="shield-check" class="w-5 h-5"></i>
+                            </div>
+                            <h4 class="text-base font-bold text-slate-900 mb-1">IP67 Enclosures</h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">Tough physical builds shielding components from dust, rain and rust.</p>
+                        </div>
+
+                        <div class="bg-slate-50 border border-slate-100 hover:border-brand-200 hover:bg-brand-50/20 p-6 rounded-2xl transition-all duration-300 shadow-sm group hover:-translate-y-1">
+                            <div class="w-10 h-10 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i data-lucide="zap" class="w-5 h-5"></i>
+                            </div>
+                            <h4 class="text-base font-bold text-slate-900 mb-1">Solar Harvesters</h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">Autonomous solar batteries providing zero-maintenance runtimes.</p>
+                        </div>
+
+                        <div class="bg-slate-50 border border-slate-100 hover:border-brand-200 hover:bg-brand-50/20 p-6 rounded-2xl transition-all duration-300 shadow-sm group hover:-translate-y-1">
+                            <div class="w-10 h-10 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i data-lucide="network" class="w-5 h-5"></i>
+                            </div>
+                            <h4 class="text-base font-bold text-slate-900 mb-1">Local Edge ML</h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">In-device algorithms calculating commands offline on-site.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERVICES SECTION -->
+        <section id="services" class="py-20 sm:py-24 bg-slate-50 relative overflow-hidden w-full">
+            <div class="absolute inset-0 tech-grid-bg opacity-50 pointer-events-none"></div>
+
+            <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-8 md:px-16 xl:px-24 relative z-10">
+                <div class="text-center max-w-xl mx-auto mb-12 lg:mb-16 fade-in-on-scroll">
+                    <span class="text-brand-600 font-extrabold text-xs uppercase tracking-widest block mb-2">Our Solutions</span>
+                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
+                        Engineering Services
+                    </h2>
+                    <div class="w-12 h-1 bg-brand-600 mx-auto mt-4 rounded-full"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8">
+                    <!-- Card 1 -->
+                    <div class="bg-white border border-slate-100 rounded-2xl p-6 lg:p-8 hover:shadow-xl hover:shadow-emerald-900/5 hover:border-brand-200 hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between fade-in-on-scroll">
+                        <div>
+                            <div class="w-12 h-12 bg-brand-50 text-brand-700 rounded-xl flex items-center justify-center mb-6 group-hover:bg-brand-700 group-hover:text-white transition-all duration-300">
+                                <i data-lucide="activity" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-900 mb-3 group-hover:text-brand-800 transition-colors">IoT Precision Agriculture</h3>
+                            <p class="text-slate-500 text-xs sm:text-sm leading-relaxed mb-6">Deploy networks tracking NPK counts, volumetric soil hydration, leaf status, and local temperatures.</p>
+                        </div>
+                        <ul class="space-y-2 border-t border-slate-50 pt-4 text-xs font-semibold text-slate-600">
+                            <li class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-brand-600"></i> LoRaWAN Mesh Layout</li>
+                            <li class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-brand-600"></i> Microamp Battery States</li>
+                        </ul>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="bg-white border border-slate-100 rounded-2xl p-6 lg:p-8 hover:shadow-xl hover:shadow-emerald-900/5 hover:border-brand-200 hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between fade-in-on-scroll">
+                        <div>
+                            <div class="w-12 h-12 bg-brand-50 text-brand-700 rounded-xl flex items-center justify-center mb-6 group-hover:bg-brand-700 group-hover:text-white transition-all duration-300">
+                                <i data-lucide="hard-drive" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-900 mb-3 group-hover:text-brand-800 transition-colors">Custom Hardware Development</h3>
+                            <p class="text-slate-500 text-xs sm:text-sm leading-relaxed mb-6">In-house customized PCB designs, schematic structures, metal layouts, and rapid-build functional testing runs.</p>
+                        </div>
+                        <ul class="space-y-2 border-t border-slate-50 pt-4 text-xs font-semibold text-slate-600">
+                            <li class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-brand-600"></i> Altium Designer Layouts</li>
+                            <li class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-brand-600"></i> Quick Prototyping Systems</li>
+                        </ul>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="bg-white border border-slate-100 rounded-2xl p-6 lg:p-8 hover:shadow-xl hover:shadow-emerald-900/5 hover:border-brand-200 hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between fade-in-on-scroll">
+                        <div>
+                            <div class="w-12 h-12 bg-brand-50 text-brand-700 rounded-xl flex items-center justify-center mb-6 group-hover:bg-brand-700 group-hover:text-white transition-all duration-300">
+                                <i data-lucide="binary" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-900 mb-3 group-hover:text-brand-800 transition-colors">Embedded Firmware Design</h3>
+                            <p class="text-slate-500 text-xs sm:text-sm leading-relaxed mb-6">Lightweight C/C++ microcode for STM32 and ESP32 hardware with dynamic deep-sleep power cycles.</p>
+                        </div>
+                        <ul class="space-y-2 border-t border-slate-50 pt-4 text-xs font-semibold text-slate-600">
+                            <li class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-brand-600"></i> RTOS Operating Layers</li>
+                            <li class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-brand-600"></i> Secured OTA Patching</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROJECTS SECTION -->
+        <section id="projects" class="py-20 sm:py-24 bg-white relative overflow-hidden w-full border-b border-slate-100">
+            <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-8 md:px-16 xl:px-24 relative z-10">
+                <div class="text-center max-w-xl mx-auto mb-12 lg:mb-16 fade-in-on-scroll">
+                    <span class="text-brand-600 font-extrabold text-xs uppercase tracking-widest block mb-2">Portfolio</span>
+                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">Featured AgTech Projects</h2>
+                    <div class="w-12 h-1 bg-brand-600 mx-auto mt-4 rounded-full"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Project 1 -->
+                    <div class="bg-slate-50 border border-slate-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group flex flex-col justify-between fade-in-on-scroll">
+                        <div class="relative overflow-hidden aspect-video bg-brand-900/10">
+                            <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=600&auto=format&fit=crop" alt="Precision Node" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <span class="absolute top-4 left-4 bg-brand-700 text-white text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-md shadow-sm">IoT Mesh</span>
+                        </div>
+                        <div class="p-6 flex-grow flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-900 group-hover:text-brand-700 transition-colors mb-2">Smart Field Node V3</h3>
+                                <p class="text-xs text-slate-500 leading-relaxed mb-4">Deploying ultra-low power LoRa field nodes tracking soil analytics under deep foliage across 5,000 hectares.</p>
+                            </div>
+                            <div class="flex items-center justify-between text-xs font-semibold text-slate-400 border-t border-slate-200/50 pt-4">
+                                <span>Status: Operational</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 2 -->
+                    <div class="bg-slate-50 border border-slate-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group flex flex-col justify-between fade-in-on-scroll">
+                        <div class="relative overflow-hidden aspect-video bg-brand-900/10">
+                            <img src="https://images.unsplash.com/photo-1463123081488-729f60c1926d?q=80&w=600&auto=format&fit=crop" alt="Valve System" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <span class="absolute top-4 left-4 bg-brand-700 text-white text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-md shadow-sm">Automation</span>
+                        </div>
+                        <div class="p-6 flex-grow flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-900 group-hover:text-brand-700 transition-colors mb-2">Automated Drip Valve System</h3>
+                                <p class="text-xs text-slate-500 leading-relaxed mb-4">A high-torque, solar-powered mechanical valve driver system that opens or blocks pipelines based on live sensor data.</p>
+                            </div>
+                            <div class="flex items-center justify-between text-xs font-semibold text-slate-400 border-t border-slate-200/50 pt-4">
+                                <span>Status: R&D Testing</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 3 -->
+                    <div class="bg-slate-50 border border-slate-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group flex flex-col justify-between fade-in-on-scroll">
+                        <div class="relative overflow-hidden aspect-video bg-brand-900/10">
+                            <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?q=80&w=600&auto=format&fit=crop" alt="Gateway" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <span class="absolute top-4 left-4 bg-brand-700 text-white text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-md shadow-sm">Infrastructure</span>
+                        </div>
+                        <div class="p-6 flex-grow flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-900 group-hover:text-brand-700 transition-colors mb-2">Solar LoRa Gateway v1.5</h3>
+                                <p class="text-xs text-slate-500 leading-relaxed mb-4">Stand-alone outdoor cellular-backhaul hubs built with automated battery heaters for extreme winter environments.</p>
+                            </div>
+                            <div class="flex items-center justify-between text-xs font-semibold text-slate-400 border-t border-slate-200/50 pt-4">
+                                <span>Status: Commercialized</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT SECTION -->
+        <section id="contact" class="py-20 sm:py-24 bg-slate-50 border-t border-slate-100 w-full relative">
+            <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-8 md:px-16 xl:px-24">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+                    <!-- Left Contact Info -->
+                    <div class="lg:col-span-5 space-y-8 fade-in-on-scroll">
+                        <div>
+                            <span class="text-brand-600 font-extrabold text-sm uppercase tracking-widest block mb-3">Reach Out</span>
+                            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">Let's Co-create Agritech Excellence</h2>
+                            <p class="text-slate-500 mt-4 leading-relaxed text-sm sm:text-base">
+                                Have an inquiry, hardware specification, or proposal? Fill out the form. Our engineering team responds within 24 working hours.
+                            </p>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-white border border-slate-100 text-brand-700 flex items-center justify-center shadow-sm">
+                                    <i data-lucide="mail" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Email Inquiry</span>
+                                    <a href="mailto:info@agrowintech.com" class="text-sm sm:text-base font-semibold text-slate-800 hover:text-brand-700 transition-colors">agrowintechnology@gmail.com</a>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-white border border-slate-100 text-brand-700 flex items-center justify-center shadow-sm">
+                                    <i data-lucide="phone" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Call or Message</span>
+                                    <a href="tel:+919876543210" class="text-sm sm:text-base font-semibold text-slate-800 hover:text-brand-700 transition-colors">+91 75985 57533</a>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-white border border-slate-100 text-brand-700 flex items-center justify-center shadow-sm">
+                                    <i data-lucide="map-pin" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Office Location</span>
+                                    <span class="text-sm sm:text-base font-semibold text-slate-800 block">
+                                        AGROWIN TECHNOLOGY PRIVATE LIMITED,<br>
+                                        29, Parayankattuvalasu, Thuyyampundurai, Erode, Tamil Nadu, India - 638115
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                       <div class="w-full h-44 border border-slate-200/80 rounded-2xl relative overflow-hidden shadow-inner group">
+                            <!-- Embedded Google Map -->
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d326.12496799364135!2d77.69989266287824!3d11.224610611708638!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1sen!2sin!4v1784362437549!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+
+                            <!-- Overlay for readability -->
+                            <div class="absolute inset-0 bg-black/30 pointer-events-none"></div>
+
+                            <!-- Content overlay -->
+                            <div class="absolute inset-0 flex items-center justify-center text-center z-10 px-4 pointer-events-none">
+                                <div>
+                                    <div class="w-10 h-10 bg-brand-700 rounded-full flex items-center justify-center text-white mx-auto shadow-lg shadow-brand-700/20 group-hover:scale-110 transition-all mb-3">
+                                        <i data-lucide="map-pin" class="w-5 h-5"></i>
+                                    </div>
+
+                                    <span class="font-bold text-sm text-white block mb-1">
+                                        AGROWIN R&D Facility
+                                    </span>
+
+                                    <span class="text-xs text-slate-200 font-medium">
+                                        Bangalore Science Corridor
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Form -->
+                    <div class="lg:col-span-7 fade-in-on-scroll">
+                        <form id="contactForm" onsubmit="handleContactSubmit(event)" class="bg-white border border-slate-100 shadow-xl rounded-3xl p-6 sm:p-10 space-y-6">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="firstName" class="block text-sm font-semibold text-slate-700 mb-1.5">First Name *</label>
+                                    <input type="text" id="firstName" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 focus:bg-white transition-all duration-300">
+                                </div>
+                                <div>
+                                    <label for="lastName" class="block text-sm font-semibold text-slate-700 mb-1.5">Last Name *</label>
+                                    <input type="text" id="lastName" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 focus:bg-white transition-all duration-300">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="contactEmail" class="block text-sm font-semibold text-slate-700 mb-1.5">Business Email *</label>
+                                <input type="email" id="contactEmail" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 focus:bg-white transition-all duration-300">
+                            </div>
+
+                            <div>
+                                <label for="contactSubject" class="block text-sm font-semibold text-slate-700 mb-1.5">Area of Interest *</label>
+                                <select id="contactSubject" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 focus:bg-white transition-all duration-300">
+                                    <option value="iot">Precision AgTech & IoT Hardware</option>
+                                    <option value="pcb">Custom PCB/Embedded Design</option>
+                                    <option value="irrigation">Irrigation Automation Solutions</option>
+                                    <option value="careers">Careers / Joining the Board</option>
+                                    <option value="other">General Corporate Consultation</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="contactMessage" class="block text-sm font-semibold text-slate-700 mb-1.5">Inquiry Details *</label>
+                                <textarea id="contactMessage" rows="5" required placeholder="Outline your project scope or hardware requirements here..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 focus:bg-white transition-all duration-300 resize-none"></textarea>
+                            </div>
+
+                            <div class="flex items-start gap-3">
+                                <input type="checkbox" id="privacyPolicy" required class="mt-1 w-4 h-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500 focus:ring-offset-2">
+                                <label for="privacyPolicy" class="text-xs text-slate-400 font-medium leading-relaxed">
+                                    I authorize AGROWIN TECHNOLOGY PRIVATE LIMITED to store my contact details to reply to this project/business inquiry.
+                                </label>
+                            </div>
+
+                            <button type="submit" class="w-full py-4 bg-brand-700 hover:bg-brand-800 text-white font-bold rounded-xl shadow-lg shadow-brand-700/20 hover:shadow-xl hover:shadow-brand-700/35 transition-all duration-300">
+                                Submit Engineering Inquiry
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ======================================================== -->
+    <!-- TEMPLATE 2: ACHIEVEMENTS VIEW (achievements.html) -->
+    <!-- ======================================================== -->
+    <main id="achievements-view" class="view-transition view-hidden w-full flex-grow pt-28 pb-20">
+        <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-8 md:px-16 xl:px-24">
+            
+            <!-- Page Header -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-200/65 pb-6 mb-12">
+                <div>
+                    <span class="text-brand-600 font-extrabold text-xs uppercase tracking-widest block mb-1">Company Milestone Portfolio</span>
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Our Achievements</h1>
+                </div>
+                <button onclick="navigateToHash('#home')" class="mt-4 md:mt-0 flex items-center justify-center gap-2 px-5 py-2.5 border border-slate-200 hover:bg-slate-100 text-slate-700 text-sm font-semibold rounded-xl transition-all">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Home
+                </button>
+            </div>
+
+            <!-- Milestone Timeline Grid with elegant side-by-side descriptive images -->
+            <div class="max-w-5xl mx-auto relative pl-6 border-l-2 border-brand-200 space-y-16 py-4">
+                
+                <!-- Timeline item 1 -->
+                <div class="relative grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                    <div class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-brand-600 border-4 border-white shadow-sm"></div>
+                    <div class="md:col-span-7">
+                        <span class="inline-block bg-brand-100 text-brand-800 text-[10px] font-bold px-2 py-0.5 rounded-full mb-1">Q2 2026</span>
+                        <h3 class="text-xl font-extrabold text-slate-900">National AgTech Leadership Award</h3>
+                        <p class="text-sm text-slate-500 mt-2 leading-relaxed">Recognized for deploying water-conservation sensor networks across 10,000+ acres of agricultural fields in Karnataka, saving roughly 40 million liters of water.</p>
+                    </div>
+                    <div class="md:col-span-5">
+                        <div class="rounded-2xl overflow-hidden aspect-video border border-slate-100 shadow-md">
+                            <img src="https://images.unsplash.com/photo-1592982537447-7440770cbfc9?q=80&w=400&auto=format&fit=crop" alt="Agtech Leadership Field Sensor" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline item 2 -->
+                <div class="relative grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                    <div class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-brand-600 border-4 border-white shadow-sm"></div>
+                    <div class="md:col-span-7">
+                        <span class="inline-block bg-brand-100 text-brand-800 text-[10px] font-bold px-2 py-0.5 rounded-full mb-1">2025</span>
+                        <h3 class="text-xl font-extrabold text-slate-900">IP67 Enclosure Integrity Certification</h3>
+                        <p class="text-sm text-slate-500 mt-2 leading-relaxed">Awarded certification for our custom silicon shield box design, guaranteeing zero moisture entry even during sustained tropical flooding events.</p>
+                    </div>
+                    <div class="md:col-span-5">
+                        <div class="rounded-2xl overflow-hidden aspect-video border border-slate-100 shadow-md">
+                            <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=400&auto=format&fit=crop" alt="IP67 Testing Lab" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline item 3 -->
+                <div class="relative grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                    <div class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-brand-600 border-4 border-white shadow-sm"></div>
+                    <div class="md:col-span-7">
+                        <span class="inline-block bg-brand-100 text-brand-800 text-[10px] font-bold px-2 py-0.5 rounded-full mb-1">2024</span>
+                        <h3 class="text-xl font-extrabold text-slate-900">LoRa Field Router Patent Granted</h3>
+                        <p class="text-sm text-slate-500 mt-2 leading-relaxed">Secured physical hardware architecture patents on an integrated ultra-low frequency smart transceiver capable of passing diagnostic feeds through deep mud obstacles.</p>
+                    </div>
+                    <div class="md:col-span-5">
+                        <div class="rounded-2xl overflow-hidden aspect-video border border-slate-100 shadow-md">
+                            <img src="https://images.unsplash.com/photo-1517055720413-77a270831655?q=80&w=400&auto=format&fit=crop" alt="Patented Router Circuit" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ======================================================== -->
+    <!-- TEMPLATE 3: COMPANY PEOPLE VIEW (people.html) -->
+    <!-- ======================================================== -->
+    <main id="people-view" class="view-transition view-hidden w-full flex-grow pt-28 pb-20">
+        <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-8 md:px-16 xl:px-24">
+            
+            <!-- Page Header -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-200/65 pb-6 mb-12">
+                <div>
+                    <span class="text-brand-600 font-extrabold text-xs uppercase tracking-widest block mb-1">Leadership & Engineering Team</span>
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Company People</h1>
+                </div>
+                <button onclick="navigateToHash('#home')" class="mt-4 md:mt-0 flex items-center justify-center gap-2 px-5 py-2.5 border border-slate-200 hover:bg-slate-100 text-slate-700 text-sm font-semibold rounded-xl transition-all">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Home
+                </button>
+            </div>
+
+            <!-- Team Members Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Member 1 -->
+                <div class="bg-white border border-slate-100 p-6 rounded-3xl shadow-sm text-center flex flex-col justify-between items-center h-80 hover:-translate-y-1 transition-all duration-300">
+                    <div class="w-20 h-20 bg-brand-100 text-brand-700 text-2xl font-bold rounded-2xl flex items-center justify-center mb-4">DR</div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900">Dharmesh Rao</h3>
+                        <span class="block text-xs text-brand-600 font-semibold mb-2">Director & Founder</span>
+                        <p class="text-xs text-slate-500 leading-relaxed px-4">25+ years in agricultural field operations combined with extensive mechanical development certifications.</p>
+                    </div>
+                    <div class="w-full border-t border-slate-100 pt-4 flex justify-center gap-3">
+                        <a href="#" class="text-slate-400 hover:text-brand-600"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+                        <a href="#" class="text-slate-400 hover:text-brand-600"><i data-lucide="mail" class="w-4 h-4"></i></a>
+                    </div>
+                </div>
+
+                <!-- Member 2 -->
+                <div class="bg-white border border-slate-100 p-6 rounded-3xl shadow-sm text-center flex flex-col justify-between items-center h-80 hover:-translate-y-1 transition-all duration-300">
+                    <div class="w-20 h-20 bg-brand-100 text-brand-700 text-2xl font-bold rounded-2xl flex items-center justify-center mb-4">VS</div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900">Vijay Shekhar</h3>
+                        <span class="block text-xs text-brand-600 font-semibold mb-2">Principal Embedded Architect</span>
+                        <p class="text-xs text-slate-500 leading-relaxed px-4">Expert PCB designer, specializing in ultra-low energy dissipation, microcontrollers, and custom silicon boards.</p>
+                    </div>
+                    <div class="w-full border-t border-slate-100 pt-4 flex justify-center gap-3">
+                        <a href="#" class="text-slate-400 hover:text-brand-600"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+                        <a href="#" class="text-slate-400 hover:text-brand-600"><i data-lucide="mail" class="w-4 h-4"></i></a>
+                    </div>
+                </div>
+
+                <!-- Member 3 -->
+                <div class="bg-white border border-slate-100 p-6 rounded-3xl shadow-sm text-center flex flex-col justify-between items-center h-80 hover:-translate-y-1 transition-all duration-300">
+                    <div class="w-20 h-20 bg-brand-100 text-brand-700 text-2xl font-bold rounded-2xl flex items-center justify-center mb-4">AK</div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900">Ananya Krish</h3>
+                        <span class="block text-xs text-brand-600 font-semibold mb-2">Head of Firmware and IoT ML</span>
+                        <p class="text-xs text-slate-500 leading-relaxed px-4">Specialist in writing highly optimized C/C++ microcode and training TinyML modules for resource-limited processors.</p>
+                    </div>
+                    <div class="w-full border-t border-slate-100 pt-4 flex justify-center gap-3">
+                        <a href="#" class="text-slate-400 hover:text-brand-600"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+                        <a href="#" class="text-slate-400 hover:text-brand-600"><i data-lucide="mail" class="w-4 h-4"></i></a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ======================================================== -->
+    <!-- TEMPLATE 4: CAREER VIEW (career.html) -->
+    <!-- ======================================================== -->
+    <main id="career-view" class="view-transition view-hidden w-full flex-grow pt-28 pb-20">
+        <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-8 md:px-16 xl:px-24">
+            
+            <!-- Page Header -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-200/65 pb-6 mb-12">
+                <div>
+                    <span class="text-brand-600 font-extrabold text-xs uppercase tracking-widest block mb-1">Opportunities at Agrowin</span>
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Career Opportunities</h1>
+                </div>
+                <button onclick="navigateToHash('#home')" class="mt-4 md:mt-0 flex items-center justify-center gap-2 px-5 py-2.5 border border-slate-200 hover:bg-slate-100 text-slate-700 text-sm font-semibold rounded-xl transition-all">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Home
+                </button>
+            </div>
+
+            <!-- Perks Block -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-12 lg:mb-16">
+                <div class="text-center p-6 bg-white border border-slate-100 rounded-3xl">
+                    <div class="w-12 h-12 rounded-full bg-brand-50 text-brand-700 flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="heart" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-bold text-sm sm:text-base text-slate-900 mb-2">Direct Impact</h3>
+                    <p class="text-xs text-slate-500 leading-relaxed">Your custom circuits directly optimize local freshwater resources.</p>
+                </div>
+                <div class="text-center p-6 bg-white border border-slate-100 rounded-3xl">
+                    <div class="w-12 h-12 rounded-full bg-brand-50 text-brand-700 flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="hammer" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-bold text-sm sm:text-base text-slate-900 mb-2">Modern Labs</h3>
+                    <p class="text-xs text-slate-500 leading-relaxed">Solder layouts in dynamic labs with spectrum analysers.</p>
+                </div>
+                <div class="text-center p-6 bg-white border border-slate-100 rounded-3xl">
+                    <div class="w-12 h-12 rounded-full bg-brand-50 text-brand-700 flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="award" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-bold text-sm sm:text-base text-slate-900 mb-2">Growth Options</h3>
+                    <p class="text-xs text-slate-500 leading-relaxed">Competitive health plans, continuous learning, and stock pools.</p>
+                </div>
+            </div>
+
+            <!-- Job Board -->
+            <div class="max-w-4xl mx-auto space-y-4">
+                <!-- Job Item 1 -->
+                <div class="bg-white hover:bg-brand-50/10 border border-slate-100 hover:border-brand-200 rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 transition-all duration-300">
+                    <div>
+                        <span class="inline-block px-2 py-0.5 rounded-full bg-brand-100 text-brand-800 text-[9px] font-extrabold tracking-wider uppercase mb-2">Engineering</span>
+                        <h4 class="text-base sm:text-lg font-bold text-slate-900">Lead Embedded Systems Engineer (IoT)</h4>
+                        <p class="text-xs text-slate-500 mt-1 flex items-center gap-1.5">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-slate-400"></i> Bangalore, India (Hybrid)
+                        </p>
+                    </div>
+                    <button onclick="openApplyModal('Lead Embedded Systems Engineer')" class="w-full sm:w-auto px-6 py-3 bg-brand-700 hover:bg-brand-800 text-white text-xs font-bold rounded-xl shadow-md transition-all whitespace-nowrap">
+                        Apply Now
+                    </button>
+                </div>
+
+                <!-- Job Item 2 -->
+                <div class="bg-white hover:bg-brand-50/10 border border-slate-100 hover:border-brand-200 rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 transition-all duration-300">
+                    <div>
+                        <span class="inline-block px-2 py-0.5 rounded-full bg-brand-100 text-brand-800 text-[9px] font-extrabold tracking-wider uppercase mb-2">Firmware</span>
+                        <h4 class="text-base sm:text-lg font-bold text-slate-900">Senior Firmware Developer (C++ / RTOS)</h4>
+                        <p class="text-xs text-slate-500 mt-1 flex items-center gap-1.5">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-slate-400"></i> Bangalore, India (On-site)
+                        </p>
+                    </div>
+                    <button onclick="openApplyModal('Senior Firmware Developer')" class="w-full sm:w-auto px-6 py-3 bg-brand-700 hover:bg-brand-800 text-white text-xs font-bold rounded-xl shadow-md transition-all whitespace-nowrap">
+                        Apply Now
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ======================================================== -->
+    <!-- TEMPLATE 5: GALLERY VIEW (gallery.html) -->
+    <!-- ======================================================== -->
+    <main id="gallery-view" class="view-transition view-hidden w-full flex-grow pt-28 pb-20">
+        <div class="w-full max-w-[1600px] mx-auto px-4 sm:px-8 md:px-16 xl:px-24">
+            
+            <!-- Page Header -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-200/65 pb-6 mb-12">
+                <div>
+                    <span class="text-brand-600 font-extrabold text-xs uppercase tracking-widest block mb-1">Visual Directory</span>
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Our Gallery</h1>
+                </div>
+                <button onclick="navigateToHash('#home')" class="mt-4 md:mt-0 flex items-center justify-center gap-2 px-5 py-2.5 border border-slate-200 hover:bg-slate-100 text-slate-700 text-sm font-semibold rounded-xl transition-all">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Home
+                </button>
+            </div>
+
+            <!-- Photo Gallery Grid (Minimal details layout) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Gallery Image 1 -->
+                <div class="relative overflow-hidden rounded-2xl group cursor-pointer aspect-square bg-slate-200 border border-slate-100 shadow-sm" onclick="openLightbox('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=1200&auto=format&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=600&auto=format&fit=crop" alt="Precision AgTech" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500">
+                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <div class="bg-white/90 p-3 rounded-full text-brand-700 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                            <i data-lucide="zoom-in" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gallery Image 2 -->
+                <div class="relative overflow-hidden rounded-2xl group cursor-pointer aspect-square bg-slate-200 border border-slate-100 shadow-sm" onclick="openLightbox('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=1200&auto=format&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600&auto=format&fit=crop" alt="Smart Fields" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500">
+                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <div class="bg-white/90 p-3 rounded-full text-brand-700 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                            <i data-lucide="zoom-in" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gallery Image 3 -->
+                <div class="relative overflow-hidden rounded-2xl group cursor-pointer aspect-square bg-slate-200 border border-slate-100 shadow-sm" onclick="openLightbox('https://images.unsplash.com/photo-1517055720413-77a270831655?q=80&w=1200&auto=format&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1517055720413-77a270831655?q=80&w=600&auto=format&fit=crop" alt="Sensors Circuitry" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500">
+                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <div class="bg-white/90 p-3 rounded-full text-brand-700 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                            <i data-lucide="zoom-in" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gallery Image 4 -->
+                <div class="relative overflow-hidden rounded-2xl group cursor-pointer aspect-square bg-slate-200 border border-slate-100 shadow-sm" onclick="openLightbox('https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?q=80&w=1200&auto=format&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?q=80&w=600&auto=format&fit=crop" alt="Greenhouse Precision Operations" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500">
+                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <div class="bg-white/90 p-3 rounded-full text-brand-700 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                            <i data-lucide="zoom-in" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gallery Image 5 -->
+                <div class="relative overflow-hidden rounded-2xl group cursor-pointer aspect-square bg-slate-200 border border-slate-100 shadow-sm" onclick="openLightbox('https://images.unsplash.com/photo-1592982537447-7440770cbfc9?q=80&w=1200&auto=format&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1592982537447-7440770cbfc9?q=80&w=600&auto=format&fit=crop" alt="Field Aerial Surveying" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500">
+                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <div class="bg-white/90 p-3 rounded-full text-brand-700 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                            <i data-lucide="zoom-in" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gallery Image 6 -->
+                <div class="relative overflow-hidden rounded-2xl group cursor-pointer aspect-square bg-slate-200 border border-slate-100 shadow-sm" onclick="openLightbox('https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?q=80&w=1200&auto=format&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?q=80&w=600&auto=format&fit=crop" alt="Grain Agricultural Growth" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500">
+                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <div class="bg-white/90 p-3 rounded-full text-brand-700 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                            <i data-lucide="zoom-in" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gallery Image 7 -->
+                <div class="relative overflow-hidden rounded-2xl group cursor-pointer aspect-square bg-slate-200 border border-slate-100 shadow-sm" onclick="openLightbox('https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=1200&auto=format&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=600&auto=format&fit=crop" alt="Embedded Labs Research" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500">
+                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <div class="bg-white/90 p-3 rounded-full text-brand-700 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                            <i data-lucide="zoom-in" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gallery Image 8 -->
+                <div class="relative overflow-hidden rounded-2xl group cursor-pointer aspect-square bg-slate-200 border border-slate-100 shadow-sm" onclick="openLightbox('https://images.unsplash.com/photo-1463123081488-729f60c1926d?q=80&w=1200&auto=format&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1463123081488-729f60c1926d?q=80&w=600&auto=format&fit=crop" alt="Automatic Sprayers Grid" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500">
+                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <div class="bg-white/90 p-3 rounded-full text-brand-700 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                            <i data-lucide="zoom-in" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 py-16 border-t border-slate-800 w-full relative z-10 mt-auto">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-8 md:px-16 xl:px-24">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div class="space-y-4 md:col-span-2">
+                    <a href="#home" onclick="navigateToHash('#home')" class="flex items-center space-x-3 group">
+                        <div class="w-10 h-10 bg-white border border-slate-800 rounded-lg flex items-center justify-center overflow-hidden p-1.5 shadow-md shadow-brand-500/10">
+                            <img src="./Assets/Logo.png" alt="AGROWIN Logo" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='https://placehold.co/100x100/ffffff/16a34a?text=AG';">
+                        </div>
+                        <span class="font-extrabold text-lg text-white tracking-tight">AGROWIN</span>
+                    </a>
+                    <p class="text-sm leading-relaxed max-w-sm text-slate-400">
+                        AGROWIN TECHNOLOGY PRIVATE LIMITED is a dedicated agritech engineering firm specializing in resilient embedded hardware, sensors, and IoT infrastructure for sustainable agricultural workflows.
+                    </p>
+                </div>
+
+                <div>
+                    <h5 class="text-xs font-extrabold text-white tracking-widest uppercase mb-4">Quick Links</h5>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#home" onclick="navigateToHash('#home')" class="hover:text-white transition-colors">Home</a></li>
+                        <li><a href="#about" onclick="navigateToHash('#about')" class="hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="#services" onclick="navigateToHash('#services')" class="hover:text-white transition-colors">Services</a></li>
+                        <li><a href="#projects" onclick="navigateToHash('#projects')" class="hover:text-white transition-colors">Projects</a></li>
+                        <li><a href="#contact" onclick="navigateToHash('#contact')" class="hover:text-white transition-colors">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="text-xs font-extrabold text-white tracking-widest uppercase mb-4">Legal</h5>
+                    <ul class="space-y-2 text-sm">
+                        <li><span class="block">CIN: U46530TZ2026PTC038618</span></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Terms of Operations</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Bottom Copyright bar -->
+            <div class="border-t border-slate-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold">
+                <p>&copy; 2026 AGROWIN TECHNOLOGY PRIVATE LIMITED. All rights reserved.</p>
+                <div class="flex space-x-6">
+                    <a href="#" class="hover:text-white transition-colors"><i data-lucide="linkedin" class="w-5 h-5"></i></a>
+                    <a href="#" class="hover:text-white transition-colors"><i data-lucide="twitter" class="w-5 h-5"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JOB APPLICATION SLIDER MODAL -->
+    <div id="applyModal" class="fixed inset-0 z-50 overflow-hidden hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
+        <div class="absolute inset-0 overflow-hidden">
+            <div id="modalOverlay" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity opacity-0 duration-300" onclick="closeApplyModal()"></div>
+
+            <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+                <div id="modalContainer" class="pointer-events-auto w-screen max-w-md transform translate-x-full transition-transform duration-300 ease-in-out">
+                    <div class="flex h-full flex-col overflow-y-scroll bg-white shadow-2xl">
+                        <!-- Modal Header -->
+                        <div class="bg-slate-50 px-6 py-6 border-b border-slate-100 flex items-center justify-between">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-900" id="applyModalTitle">Apply for Role</h3>
+                                <p class="text-xs text-brand-600 font-semibold" id="applyModalSubtitle">Agrowin Careers</p>
+                            </div>
+                            <button onclick="closeApplyModal()" class="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors">
+                                <i data-lucide="x" class="w-6 h-6"></i>
+                            </button>
+                        </div>
+
+                        <!-- Form -->
+                        <form id="applyForm" onsubmit="handleApplySubmit(event)" class="flex-1 px-6 py-8 space-y-6">
+                            <input type="hidden" id="appliedRoleName">
+                            
+                            <div>
+                                <label for="applyFullName" class="block text-sm font-semibold text-slate-700 mb-1.5">Full Name *</label>
+                                <input type="text" id="applyFullName" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 focus:bg-white transition-all duration-300">
+                            </div>
+
+                            <div>
+                                <label for="applyEmail" class="block text-sm font-semibold text-slate-700 mb-1.5">Primary Email *</label>
+                                <input type="email" id="applyEmail" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 focus:bg-white transition-all duration-300">
+                            </div>
+
+                            <div>
+                                <label for="applyPhone" class="block text-sm font-semibold text-slate-700 mb-1.5">Contact Number *</label>
+                                <input type="tel" id="applyPhone" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 focus:bg-white transition-all duration-300">
+                            </div>
+
+                            <div>
+                                <label for="applyPortfolio" class="block text-sm font-semibold text-slate-700 mb-1.5">Portfolio or LinkedIn URL *</label>
+                                <input type="url" id="applyPortfolio" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 focus:bg-white transition-all duration-300">
+                            </div>
+
+                            <div>
+                                <label for="applyResume" class="block text-sm font-semibold text-slate-700 mb-1.5">Paste Resume Text / Covering Details *</label>
+                                <textarea id="applyResume" rows="6" required placeholder="Outline your technical qualifications, previous projects, and why you wish to join Agrowin..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 focus:bg-white transition-all duration-300 resize-none"></textarea>
+                            </div>
+
+                            <button type="submit" class="w-full py-4 bg-brand-700 hover:bg-brand-800 text-white font-bold rounded-xl shadow-lg transition-all">
+                                Submit Application
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- IMMERSIVE LIGHTBOX MODAL -->
+    <div id="lightboxModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden transition-opacity duration-300 opacity-0" onclick="closeLightbox()">
+        <button class="absolute top-6 right-6 text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors">
+            <i data-lucide="x" class="w-8 h-8"></i>
+        </button>
+        <img id="lightboxImage" src="" alt="Expanded View" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl transform scale-95 transition-transform duration-300" onclick="event.stopPropagation()">
+    </div>
+
+    <!-- NOTIFICATION TOAST OVERLAY -->
+    <div id="notificationToast" class="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-slate-900 text-white px-5 py-4 rounded-2xl shadow-xl transform translate-y-20 opacity-0 transition-all duration-500 max-w-sm">
+        <div class="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center text-white shrink-0" id="toastIconContainer">
+            <i data-lucide="check" class="w-4 h-4"></i>
+        </div>
+        <div>
+            <span class="block font-bold text-sm" id="toastTitle">Success</span>
+            <span class="block text-xs text-slate-400 mt-0.5" id="toastDesc">Data submitted.</span>
+        </div>
+    </div>
+
+    <!-- SCRIPT LOGIC -->
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // 1. ADVANCED SPA HASH-BASED ROUTER
+        // Directs browser hash states to specific views and scrolls context
+        function navigateToHash(hash) {
+            const mainView = document.getElementById('main-view');
+            const achievementsView = document.getElementById('achievements-view');
+            const peopleView = document.getElementById('people-view');
+            const careerView = document.getElementById('career-view');
+            const galleryView = document.getElementById('gallery-view');
+            const siteTitle = document.getElementById('siteTitle');
+
+            // Hide all pages by default
+            mainView.classList.add('view-hidden');
+            achievementsView.classList.add('view-hidden');
+            peopleView.classList.add('view-hidden');
+            careerView.classList.add('view-hidden');
+            galleryView.classList.add('view-hidden');
+
+            // Update DOM title and display the selected route template context
+            if (hash === '#achievements') {
+                achievementsView.classList.remove('view-hidden');
+                siteTitle.textContent = "AGROWIN | Company Achievements & Patents";
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (hash === '#people') {
+                peopleView.classList.remove('view-hidden');
+                siteTitle.textContent = "AGROWIN | Leadership & Executive Board";
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (hash === '#career') {
+                careerView.classList.remove('view-hidden');
+                siteTitle.textContent = "AGROWIN | Careers & Active Job Openings";
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (hash === '#gallery') {
+                galleryView.classList.remove('view-hidden');
+                siteTitle.textContent = "AGROWIN | Detail-free Project Gallery Showcase";
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                // Return to landing page template view
+                mainView.classList.remove('view-hidden');
+                siteTitle.textContent = "AGROWIN TECHNOLOGY PRIVATE LIMITED | Smart AgTech & Embedded Solutions";
+                
+                // If nested inside home sections, scroll directly to target
+                if (hash && hash !== '#home') {
+                    const targetEl = document.querySelector(hash);
+                    if (targetEl) {
+                        targetEl.scrollIntoView({ behavior: 'smooth' });
+                    }
+                } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }
+
+            // Close active dropdown lists
+            document.getElementById('desktopSubmenu').classList.add('hidden', 'scale-95', 'opacity-0');
+        }
+
+        // Listener for native back/forward history buttons and direct links
+        window.addEventListener('hashchange', () => {
+            navigateToHash(window.location.hash);
+        });
+
+        // Initialize Router on first page load
+        window.addEventListener('load', () => {
+            if (window.location.hash) {
+                navigateToHash(window.location.hash);
+            } else {
+                navigateToHash('#home');
+            }
+        });
+
+        // 2. DESKTOP HEADER SUBMENU (Three line dropdown activator)
+        const desktopDropdownBtn = document.getElementById('desktopDropdownBtn');
+        const desktopSubmenu = document.getElementById('desktopSubmenu');
+
+        desktopDropdownBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = !desktopSubmenu.classList.contains('hidden');
+            if (isOpen) {
+                desktopSubmenu.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => { desktopSubmenu.classList.add('hidden'); }, 150);
+            } else {
+                desktopSubmenu.classList.remove('hidden');
+                setTimeout(() => { desktopSubmenu.classList.remove('scale-95', 'opacity-0'); }, 10);
+            }
+        });
+
+        document.addEventListener('click', () => {
+            desktopSubmenu.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => { desktopSubmenu.classList.add('hidden'); }, 150);
+        });
+
+        // 3. INTERACTIVE CANVAS MATRIX BACKGROUND (Responsive network)
+        const canvas = document.getElementById('agriMeshCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let particles = [];
+        let mouse = { x: null, y: null, radius: 160 };
+
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particles = [];
+            
+            const densityMultiplier = 0.00003;
+            const count = Math.min(75, Math.max(20, Math.floor(canvas.width * canvas.height * densityMultiplier)));
+            
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.4,
+                    vy: (Math.random() - 0.5) * 0.4,
+                    radius: Math.random() * 2.5 + 1
+                });
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            initCanvas();
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+        window.addEventListener('mouseleave', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            for (let i = 0; i < particles.length; i++) {
+                let p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                if (mouse.x !== null && mouse.y !== null) {
+                    let dx = p.x - mouse.x;
+                    let dy = p.y - mouse.y;
+                    let dist = Math.hypot(dx, dy);
+                    if (dist < mouse.radius) {
+                        let force = (mouse.radius - dist) / mouse.radius;
+                        p.x += (dx / dist) * force * 1.8;
+                        p.y += (dy / dist) * force * 1.8;
+                    }
+                }
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(22, 163, 74, 0.35)';
+                ctx.fill();
+
+                for (let j = i + 1; j < particles.length; j++) {
+                    let p2 = particles[j];
+                    let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                    
+                    if (dist < 140) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.strokeStyle = `rgba(34, 197, 94, ${0.12 * (1 - dist / 140)})`;
+                        ctx.lineWidth = 0.8;
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animateCanvas);
+        }
+
+        initCanvas();
+        animateCanvas();
+
+        // 4. SIMULATED LIVE TELEMETRY DATA UPDATES
+        setInterval(() => {
+            const liveMoisture = document.getElementById('liveMoisture');
+            const liveTemp = document.getElementById('liveTemp');
+            
+            if (liveMoisture) {
+                const currentM = parseFloat(liveMoisture.textContent);
+                const shiftM = (Math.random() - 0.5) * 0.4;
+                liveMoisture.textContent = Math.min(100, Math.max(0, currentM + shiftM)).toFixed(1) + ' %';
+            }
+            if (liveTemp) {
+                const currentT = parseFloat(liveTemp.textContent);
+                const shiftT = (Math.random() - 0.5) * 0.2;
+                liveTemp.textContent = Math.min(50, Math.max(-10, currentT + shiftT)).toFixed(1) + ' °C';
+            }
+        }, 3000);
+
+        // 5. STICKY HEADER SCROLL EFFECT
+        const mainHeader = document.getElementById('mainHeader');
+        const headerContainer = document.getElementById('headerContainer');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 40) {
+                mainHeader.classList.add('shadow-md');
+                headerContainer.classList.replace('h-20', 'h-16');
+            } else {
+                mainHeader.classList.remove('shadow-md');
+                headerContainer.classList.replace('h-16', 'h-20');
+            }
+        });
+
+        // 6. MOBILE MENU DRAWER CONTROLS
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuIcon = document.getElementById('menuIcon');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            const isOpen = !mobileMenu.classList.contains('hidden');
+            if (isOpen) {
+                mobileMenu.classList.add('scale-y-95', 'opacity-0');
+                setTimeout(() => { mobileMenu.classList.add('hidden'); }, 200);
+                menuIcon.setAttribute('data-lucide', 'menu');
+            } else {
+                mobileMenu.classList.remove('hidden');
+                setTimeout(() => { mobileMenu.classList.remove('scale-y-95', 'opacity-0'); }, 10);
+                menuIcon.setAttribute('data-lucide', 'x');
+            }
+            lucide.createIcons();
+        });
+
+        const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('scale-y-95', 'opacity-0');
+                setTimeout(() => { mobileMenu.classList.add('hidden'); }, 200);
+                menuIcon.setAttribute('data-lucide', 'menu');
+                lucide.createIcons();
+            });
+        });
+
+        // 7. ABOUT US TAB CONTROLS
+        function switchAboutTab(event, tabId) {
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('text-brand-700', 'border-brand-600');
+                btn.classList.add('text-slate-400', 'border-transparent');
+            });
+
+            event.currentTarget.classList.add('text-brand-700', 'border-brand-600');
+            event.currentTarget.classList.remove('text-slate-400', 'border-transparent');
+
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('block');
+            });
+
+            const activeContent = document.getElementById('tab-' + tabId);
+            activeContent.classList.remove('hidden');
+            activeContent.classList.add('block');
+        }
+
+        // 8. INTERSECTION OBSERVER FOR FADE-IN ANIMATIONS
+        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('appear');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-on-scroll').forEach(element => {
+            observer.observe(element);
+        });
+
+        // 9. TOAST NOTIFICATION UTILITY
+        function showNotification(title, message, isSuccess = true) {
+            const toast = document.getElementById('notificationToast');
+            const toastTitle = document.getElementById('toastTitle');
+            const toastDesc = document.getElementById('toastDesc');
+            const iconContainer = document.getElementById('toastIconContainer');
+
+            toastTitle.textContent = title;
+            toastDesc.textContent = message;
+
+            if (isSuccess) {
+                iconContainer.className = "w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center text-white shrink-0";
+                iconContainer.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i>`;
+            } else {
+                iconContainer.className = "w-8 h-8 rounded-full bg-red-600 flex items-center justify-center text-white shrink-0";
+                iconContainer.innerHTML = `<i data-lucide="alert-triangle" class="w-4 h-4"></i>`;
+            }
+            lucide.createIcons();
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0'); }, 4000);
+        }
+
+        // 10. FORMSPREE INTEGRATION WITH AJAX DEPLOYMENTS
+        const FORMSPREE_CONTACT_ENDPOINT = "YOUR_CONTACT_FORMSPREE_ENDPOINT_HERE";
+        const FORMSPREE_CAREER_ENDPOINT = "YOUR_CAREER_FORMSPREE_ENDPOINT_HERE";
+
+        async function handleContactSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const submitButton = form.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.textContent;
+            
+            const first = document.getElementById('firstName').value;
+            const last = document.getElementById('lastName').value;
+            const email = document.getElementById('contactEmail').value;
+            const interest = document.getElementById('contactSubject').value;
+            const message = document.getElementById('contactMessage').value;
+
+            if (FORMSPREE_CONTACT_ENDPOINT === "YOUR_CONTACT_FORMSPREE_ENDPOINT_HERE" || !FORMSPREE_CONTACT_ENDPOINT) {
+                showNotification("Demo Received", `Contact form working! (Simulated: ${first} ${last})`);
+                form.reset();
+                return;
+            }
+
+            submitButton.disabled = true;
+            submitButton.innerHTML = `<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Sending...</span>`;
+
+            try {
+                const response = await fetch(FORMSPREE_CONTACT_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({ firstName: first, lastName: last, email: email, areaOfInterest: interest, details: message })
+                });
+
+                if (response.ok) {
+                    showNotification("Inquiry Received", `Thank you ${first}, our engineers will contact you shortly.`);
+                    form.reset();
+                } else {
+                    throw new Error();
+                }
+            } catch {
+                showNotification("Delivery Failed", "Please check your network settings.", false);
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+            }
+        }
+
+        // 11. SLIDING CAREER APPLICATION FORM MODALS
+        function openApplyModal(roleName) {
+            const modal = document.getElementById('applyModal');
+            const overlay = document.getElementById('modalOverlay');
+            const container = document.getElementById('modalContainer');
+            const title = document.getElementById('applyModalTitle');
+            const roleInput = document.getElementById('appliedRoleName');
+
+            roleInput.value = roleName;
+            title.textContent = `Apply: ${roleName}`;
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                overlay.classList.remove('opacity-0');
+                container.classList.remove('translate-x-full');
+            }, 10);
+        }
+
+        function closeApplyModal() {
+            const overlay = document.getElementById('modalOverlay');
+            const container = document.getElementById('modalContainer');
+            const modal = document.getElementById('applyModal');
+
+            overlay.classList.add('opacity-0');
+            container.classList.add('translate-x-full');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.getElementById('applyForm').reset();
+            }, 300);
+        }
+
+        async function handleApplySubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const submitButton = form.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.textContent;
+
+            const name = document.getElementById('applyFullName').value;
+            const email = document.getElementById('applyEmail').value;
+            const phone = document.getElementById('applyPhone').value;
+            const portfolio = document.getElementById('applyPortfolio').value;
+            const resume = document.getElementById('applyResume').value;
+            const role = document.getElementById('appliedRoleName').value;
+
+            if (FORMSPREE_CAREER_ENDPOINT === "YOUR_CAREER_FORMSPREE_ENDPOINT_HERE" || !FORMSPREE_CAREER_ENDPOINT) {
+                closeApplyModal();
+                showNotification("Demo Application", `Application working! (Simulated: ${name} for ${role})`);
+                return;
+            }
+
+            submitButton.disabled = true;
+            submitButton.innerHTML = `<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Submitting...</span>`;
+
+            try {
+                const response = await fetch(FORMSPREE_CAREER_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({ appliedRole: role, fullName: name, email: email, phone: phone, portfolioUrl: portfolio, resumeTextCovering: resume })
+                });
+
+                if (response.ok) {
+                    closeApplyModal();
+                    showNotification("Application Sent", `Your application has been logged.`);
+                } else {
+                    throw new Error();
+                }
+            } catch {
+                showNotification("Submission Failed", "There was an error routing your profile.", false);
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+            }
+        }
+
+        // 12. IMMERSIVE LIGHTBOX GALLERY CONTROLS
+        function openLightbox(imageUrl) {
+            const lightbox = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImage');
+            
+            img.src = imageUrl;
+            lightbox.classList.remove('hidden');
+            setTimeout(() => {
+                lightbox.classList.remove('opacity-0');
+                img.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImage');
+            
+            lightbox.classList.add('opacity-0');
+            img.classList.add('scale-95');
+            setTimeout(() => {
+                lightbox.classList.add('hidden');
+                img.src = "";
+            }, 300);
+        }
+    </script>
+</body>
+</html>
